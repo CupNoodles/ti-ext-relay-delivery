@@ -1,0 +1,20 @@
+{
+    "code": "cupnoodles.relaydelivery",
+    "name": "RelayDelivery",
+    "description": "Enable delivery through Relay.",
+    "version": "v1.0.0",
+    "author": "CupNoodles",
+    "icon": {
+      "class": "fa fa-truck-fast",
+      "backgroundColor": "#1B294B",
+      "color": "#fff"
+    },
+    "homepage": "",
+    "require": {
+      "igniter.cart" : "*",
+      "igniter.coupons": "*",
+      "igniter.local": "*",
+      "igniter.user": "*",
+      "igniter.payregister": "*"
+    }
+  }
