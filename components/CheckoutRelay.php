@@ -4,11 +4,14 @@ namespace CupNoodles\RelayDelivery\Components;
 
 use Igniter\Cart\Components\Checkout;
 
+use Igniter\Flame\Exception\ApplicationException;
+use Illuminate\Support\Facades\Event;
 
 use Redirect;
 use Location;
+use App;
 
-
+use CupNoodles\RelayDelivery\Extension;
 
 class CheckoutRelay extends Checkout{
 
@@ -48,5 +51,35 @@ class CheckoutRelay extends Checkout{
         return $namedRules;
     }
 
+    protected function validateCheckout($data, $order)
+    {
+        $this->validate($data, $this->createRules(), [
+            'email.unique' => lang('igniter.cart::default.checkout.error_email_exists'),
+        ]);
+
+        $location = App::make('location');
+        if ($this->checkoutStep === 'details' && $order->isDeliveryType()) {
+
+            foreach($order->location->delivery_areas as $delivery_area){
+                if($location->isCurrentAreaId($delivery_area->area_id)){
+                    if($delivery_area->type == 'relaydelivery'){
+                        if(!Extension::canRelayDeliverTo(array_get($data, 'address', []), $order->location->location_id)){
+                            throw new ApplicationException(lang('igniter.cart::default.checkout.error_covered_area'));
+                        }
+                    }
+                    else{
+                        $this->orderManager->validateDeliveryAddress(array_get($data, 'address', []));
+                    }
+                }
+
+                
+            }
+        }
+
+        if ($this->canConfirmCheckout() && $order->order_total > 0 && !$order->payment)
+            throw new ApplicationException(lang('igniter.cart::default.checkout.error_invalid_payment'));
+
+        Event::fire('igniter.checkout.afterValidate', [$data, $order]);
+    }
 
 }

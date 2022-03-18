@@ -46,6 +46,16 @@ foreach($locations as $location){
         ]
     ];
 
+    $settings['form']['fields']['location_'.$location->location_id.'_relay_producer_key'] =  [
+        'label' => lang('cupnoodles.relaydelivery::default.relay_api_producer_key_for') . $location->location_name,
+        'type' => 'text',
+        'span' => 'left',
+        'default' => '',
+        'attributes' => [
+            'maxlength' => '1024'
+        ]
+    ];
+
     $settings['form']['fields']['location_'.$location->location_id.'_relay_producer_location_key'] =  [
         'label' => lang('cupnoodles.relaydelivery::default.relay_api_producer_location_key_for') . $location->location_name,
         'type' => 'text',

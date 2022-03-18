@@ -5,6 +5,7 @@ return [
     
     'relay_delivery_api' => 'Relay Delivery API',
     'relay_api_key_for' => 'Relay API Key for ',
+    'relay_api_producer_key_for' => 'Relay API Producer Key for ',
     'relay_api_producer_location_key_for' => 'Relay API Producer Location Key for ',
     'relay_dev_prod' => 'Relay Server Dev/Prod',
     'development' => 'Development',
