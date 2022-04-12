@@ -125,7 +125,7 @@ class Extension extends BaseExtension
             if($total->code == 'tax'){
                 $totals['tax'] = $total->value;
             }
-            if($total->code == 'tip'){
+            if($total->code == 'driver_tip'){
                 $totals['tip'] = $total->value;
             }
         }
@@ -287,6 +287,19 @@ class Extension extends BaseExtension
             ]
         ];
     }
+
+    public function registerCartConditions()
+    {
+        return [
+            \CupNoodles\RelayDelivery\CartConditions\DriverTip::class => [
+                'name' => 'driver_tip',
+                'label' => 'lang:cupnoodles.relaydelivery::default.text_driver_tip',
+                'description' => 'lang:igniter.cart::default.help_tip_condition'
+            ],
+        ];
+    }
+
+
     /**
      * Registers any admin permissions used by this extension.
      *

@@ -10,6 +10,13 @@ return [
     'relay_dev_prod' => 'Relay Server Dev/Prod',
     'development' => 'Development',
     'production' => 'Production',
+
+    'label_keys' => 'Relay API keys',
+    'label_tipping' => 'Tipping',
+    'label_enable_tipping' => 'Enable Driver Tips',
+
+    'text_driver_tip' => 'Driver Tip',
+    
     
     'relay_api_error' => 'Error connecting to Relay Delivery API. Please contact okonomibk@gmail.com or try again later.',
 

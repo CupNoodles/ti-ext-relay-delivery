@@ -2,11 +2,13 @@
 
 namespace CupNoodles\RelayDelivery\Components;
 
+use CupNoodles\RelayDelivery\Models\RelayDeliverySettings;
+
 use Igniter\Cart\Components\Checkout;
 
 use Igniter\Flame\Exception\ApplicationException;
 use Illuminate\Support\Facades\Event;
-
+use Igniter\Cart\Classes\CartManager;
 use Redirect;
 use Location;
 use App;
@@ -50,6 +52,81 @@ class CheckoutRelay extends Checkout{
 
         return $namedRules;
     }
+
+
+    // CheckoutRelay can accept a tip amount and will return partials. This requires a modification to your theme and will do nothing witout it. 
+    protected function prepareVars(){
+        parent::prepareVars();
+        $this->page['onApplyTip'] = $this->getEventHandler('onApplyTip');
+    }
+
+    public function onApplyTip()
+    {
+        try {
+            $tipType = post('tip_type');
+            if (!in_array($tipType, ['staff', 'driver']))
+                throw new ApplicationException(lang('igniter.cart::default.alert_tip_not_applied'));
+
+            $amountType = post('amount_type');
+            if (!in_array($amountType, ['none', 'amount', 'custom']))
+                throw new ApplicationException(lang('igniter.cart::default.alert_tip_not_applied'));
+
+            $amount = post('amount');
+            if (preg_match('/^\d+([\.\d]{2})?([%])?$/', $amount) === FALSE)
+                throw new ApplicationException(lang('igniter.cart::default.alert_tip_not_applied'));
+
+            $cartManager = CartManager::instance();
+
+
+            $cartManager->applyCondition($tipType == 'driver' ? 'driver_tip' : 'tip', [
+                'amountType' => $amountType,
+                'amount' => $amount,
+            ]);
+
+            $this->controller->pageCycle();
+
+            return $this->fetchTipPartials();
+        }
+        catch (Exception $ex) {
+            if (Request::ajax()) throw $ex;
+            else flash()->alert($ex->getMessage());
+        }
+    }
+
+    public function fetchTipPartials()
+    {
+        $this->prepareVars();
+
+        return [
+            '#checkout-subtotals' => $this->renderPartial('@subtotals'),
+            '#checkout-staff-tip' => $this->renderPartial('@staff_tip_box'),
+            '#checkout-driver-tip' => $this->renderPartial('@driver_tip_box'),
+            '#checkout-total' => $this->renderPartial('@totals'),
+        ];
+    }
+
+
+    public static function driverTippingAmounts()
+    {
+        $result = [];
+
+        $tipValueType = RelayDeliverySettings::get('driver_tip_value_type', 'F');
+        $amounts = (array)RelayDeliverySettings::get('driver_tip_amounts', []);
+
+        $amounts = sort_array($amounts, 'priority');
+
+        foreach ($amounts as $index => $amount) {
+            $amount['valueType'] = $tipValueType;
+            $result[$index] = (object)$amount;
+        }
+
+        return $result;
+    }
+
+    // end tipping section
+
+
+
 
     protected function validateCheckout($data, $order)
     {
