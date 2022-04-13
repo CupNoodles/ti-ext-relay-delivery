@@ -61,9 +61,11 @@ class Extension extends BaseExtension
         // Put a 'relay' button for type on delivery areas
         Event::listen('admin.form.extendFieldsBefore', function (Form $form) {
             if ($form->model instanceof Location_areas_model) {
-                $form->fields['type']['options']['relaydelivery'] = lang('cupnoodles.relaydelivery::default.relay_delivery_api');
-                // the map shows up when you select relay unless you edit the maps trigger conditions
-                $form->fields['_mapview']['trigger']['condition'] = 'value[address], value[relaydelivery]';
+                if( $form->fields['type']['label'] == 'lang:admin::lang.locations.label_area_type'){
+                    $form->fields['type']['options']['relaydelivery'] = lang('cupnoodles.relaydelivery::default.relay_delivery_api');
+                    // the map shows up when you select relay unless you edit the maps trigger conditions
+                    $form->fields['_mapview']['trigger']['condition'] = 'value[address], value[relaydelivery]';
+                }
             }
         });
 
