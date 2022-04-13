@@ -17,8 +17,7 @@ return [
 
     'text_driver_tip' => 'Driver Tip',
     
-    
-    'relay_api_error' => 'Error connecting to Relay Delivery API. Please contact okonomibk@gmail.com or try again later.',
+    'relay_api_error' => 'We\'re unable to validate this address through our delivery partner (Relay). Please double check the address and try again.',
 
     'label_delivery_instructions' => 'Delivery Instructions (for example: "Leave with Doorman")'
 ];

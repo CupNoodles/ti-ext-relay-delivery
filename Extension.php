@@ -221,8 +221,6 @@ class Extension extends BaseExtension
             ];
         }
 
-
-
         try {
             $res = $client->post($url, [
                     'headers' => [
@@ -233,7 +231,7 @@ class Extension extends BaseExtension
                 ]);
                 
         } catch (RequestException $e) {
-            throw new ApplicationException(lang("cupnoodles.relaydelivery::defualt.relay_api_error"));
+            throw new ApplicationException(lang("cupnoodles.relaydelivery::default.relay_api_error"));
         }
 
         
