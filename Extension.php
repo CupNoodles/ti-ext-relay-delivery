@@ -82,7 +82,9 @@ class Extension extends BaseExtension
 
         // save the delivery instructions field to the order
         Event::listen('igniter.checkout.beforeSaveOrder', function(Orders_Model $order, $data){
-            $order->delivery_instructions = $data['delivery_instructions'];
+            if(isset($data['delivery_instructions'])){
+                $order->delivery_instructions = $data['delivery_instructions'];
+            }
         });
         
         // send the order to Relay

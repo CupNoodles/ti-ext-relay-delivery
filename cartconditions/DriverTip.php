@@ -36,6 +36,11 @@ class DriverTip extends CartCondition
         if (!$tipAmount = $this->getMetaData('amount'))
             return FALSE;
 
+        // if this isn't a delivery order
+        if(!Location::orderTypeIsDelivery()){
+            return FALSE;
+        }
+
         $value = $this->getMetaData('amount');
         if (preg_match('/^\d+([\.\d]{2})?([%])?$/', $value) === FALSE || $value < 0) {
             $this->removeMetaData('amount');
