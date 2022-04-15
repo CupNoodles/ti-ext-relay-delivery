@@ -4,6 +4,7 @@ namespace CupNoodles\RelayDelivery\CartConditions;
 
 use CupNoodles\RelayDelivery\Models\RelayDeliverySettings;
 use Igniter\Flame\Cart\CartCondition;
+use Igniter\Local\Facades\Location;
 use System\Models\Currencies_model;
 use Igniter\Cart\Classes\CartManager;
 
@@ -59,13 +60,18 @@ class DriverTip extends CartCondition
 
     public function calculate($total)
     {
-        $cartManager = CartManager::instance();
-        $staffTipAmount = $cartManager->getCart()->getCondition('tip')->calculatedValue;
-        $total -= $staffTipAmount;
-        
-        $result = parent::calculate($total);
+        if(Location::orderTypeIsDelivery()){
+            $cartManager = CartManager::instance();
+            $staffTipAmount = $cartManager->getCart()->getCondition('tip')->calculatedValue;
+            $total -= $staffTipAmount;
+            
+            $result = parent::calculate($total);
+            $result += $staffTipAmount;
 
-
-        return $result;
+            return $result;
+        }
+        else{
+            return $total;
+        }
     }
 }
