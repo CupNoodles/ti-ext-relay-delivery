@@ -31,7 +31,7 @@ class LocalBoxRelay extends LocalBox
 
         $this->updateCurrentOrderType();
 
-        if ($this->checkCurrentLocation()) {
+        if ($this->currentLocationIsDisabled()) {
             flash()->error(lang('igniter.local::default.alert_location_required'));
 
             return Redirect::to($this->controller->pageUrl($this->property('redirect')));
