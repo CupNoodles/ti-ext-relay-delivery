@@ -19,6 +19,8 @@ use GuzzleHttp\Exception\RequestException;
 
 use CupNoodles\RelayDelivery\Models\RelayDeliverySettings;
 
+use Illuminate\Support\Facades\Log;
+
 /**
  * Relay Delivery Extension Information File
  */
@@ -178,6 +180,14 @@ class Extension extends BaseExtension
         }
         
         $result = json_decode($res->getBody());
+
+        // add relay ready time into order db if it exists
+        if($result->order->time->ready){
+            $order->relay_ready_time = $result->order->time->ready;
+            $order->save();
+        }
+
+        
 
         if($result->success == 'true'){
             return true;

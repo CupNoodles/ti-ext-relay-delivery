@@ -10,7 +10,7 @@ use Schema;
 /**
  * 
  */
-class AddDeliveryInstructions extends Migration
+class AddReadyTime extends Migration
 {
     
      /**
@@ -19,7 +19,7 @@ class AddDeliveryInstructions extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->string('delivery_instructions', 255);
+            $table->datetime('relay_ready_time');
         });
 
     }
@@ -28,11 +28,11 @@ class AddDeliveryInstructions extends Migration
      */
     public function down()
     {
-            Schema::table('orders', function (Blueprint $table) {
-                if (Schema::hasColumn('orders', 'delivery_instructions')) {
-                    $table->dropColumn('delivery_instructions');    
-                }
-            });
+        Schema::table('orders', function (Blueprint $table) {
+            if (Schema::hasColumn('orders', 'relay_ready_time')) {
+                $table->dropColumn('relay_ready_time');
+            }
+        });
     }
 
 }
