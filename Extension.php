@@ -66,7 +66,9 @@ class Extension extends BaseExtension
                     // the map shows up when you select relay unless you edit the maps trigger conditions
                     $form->fields['_mapview']['trigger']['condition'] = 'value[address], value[relaydelivery]';
                 }
+                
             }
+
         });
 
         // the geocoder throws away the subpremise for some reason - orders in big cities should require apt #
@@ -88,11 +90,11 @@ class Extension extends BaseExtension
         });
         
         // send the order to Relay
-        Event::listen('igniter.checkout.afterSaveOrder', function(Orders_Model $order){
+        Event::listen('admin.order.paymentProcessed', function(Orders_Model $order){
 
             if($order->order_type == 'delivery'){
                 if( $order->location->delivery_areas[0]->type == 'relaydelivery'){
-                    $this->sendOrderToRelay($order);                    
+                    $this->sendOrderToRelay($order);
                 }
             }
         });
