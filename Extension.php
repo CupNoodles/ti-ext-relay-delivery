@@ -127,10 +127,11 @@ class Extension extends BaseExtension
             if($total->code == 'subtotal'){
                 $totals['subTotal'] = $total->value;
             }
+            // the 'deliveryFee' field in Relay API does not seem to be working - possibly need to update to v2
             if($total->code == 'delivery'){
-                $totals['delivery'] = $total->value;
+                $totals['deliveryFee'] = $total->value;
             }
-            if($total->code == 'tax'){
+            if($total->code == 'tax' || $total->code == 'variableTax1'){
                 $totals['tax'] = $total->value;
             }
             if($total->code == 'driver_tip'){
@@ -158,6 +159,7 @@ class Extension extends BaseExtension
             ]
         ];
 
+
         if(!$order->order_time_is_asap){
             $request_body['order']['time'] = [
                 'isFutureOrder' => true,
@@ -181,9 +183,12 @@ class Extension extends BaseExtension
         
         $result = json_decode($res->getBody());
 
+
         // add relay ready time into order db if it exists
         if($result->order->time->ready){
-            $order->relay_ready_time = $result->order->time->ready;
+            $date = new \DateTime($result->order->time->ready);
+            $date->setTimezone(new \DateTimeZone(setting('timezone'))); 
+            $order->relay_ready_time = $date->format('Y-m-d H:i:s');
             $order->save();
         }
 

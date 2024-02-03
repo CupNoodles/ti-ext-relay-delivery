@@ -41,6 +41,7 @@ class LocalBoxRelay extends LocalBox
     }
 
     public function onSearchAddress(){
+
         
         try {
             if (!$searchQuery = $this->getRequestSearchQuery())
@@ -51,17 +52,22 @@ class LocalBoxRelay extends LocalBox
                 : $this->geocodeSearchQuery($searchQuery);
 
 
-            $locations = Locations_model::all();
+            $locations = Locations_model::with('delivery_areas')->get();
 
             $foundLocation = false;
             foreach($locations as $location){
-                if(Extension::canRelayDeliverTo($userLocation->getCoordinates(), $location->location_id)){
-                    $foundLocation = true;
-                    Location::updateNearbyArea($location->delivery_areas->first());
+                foreach($location->delivery_areas as $delivery_area){
+                    if($delivery_area->type == 'relaydelivery'){
+                        if(Extension::canRelayDeliverTo($userLocation->getCoordinates(), $location->location_id)){
+                            $foundLocation = true;
+                            Location::updateNearbyArea($location->delivery_areas->first());
+                        }
+                    }
                 }
+                
             }
 
-                
+            
             $nearByLocation = Location::searchByCoordinates(
                 $userLocation->getCoordinates()
             )->first(function ($location) use ($userLocation) {
