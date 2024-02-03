@@ -125,11 +125,12 @@ class Extension extends BaseExtension
         $totals = [];
         foreach($order_totals as $total){
             if($total->code == 'subtotal'){
-                $totals['subTotal'] = $total->value;
+                $totals['subTotal'] += $total->value;
             }
             // the 'deliveryFee' field in Relay API does not seem to be working - possibly need to update to v2
             if($total->code == 'delivery'){
-                $totals['deliveryFee'] = $total->value;
+                $totals['subTotal'] += $total->value;
+                //$totals['deliveryFee'] = $total->value;
             }
             if($total->code == 'tax' || $total->code == 'variableTax1'){
                 $totals['tax'] = $total->value;
