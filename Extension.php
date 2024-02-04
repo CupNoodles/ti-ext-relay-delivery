@@ -123,6 +123,7 @@ class Extension extends BaseExtension
         
         $order_totals = $order->getOrderTotals();
         $totals = [];
+        $totals['subTotal'] = 0;
         foreach($order_totals as $total){
             if($total->code == 'subtotal'){
                 $totals['subTotal'] += $total->value;
