@@ -120,6 +120,17 @@ class Extension extends BaseExtension
         else{
             $url = 'https://dev-api.deliveryrelay.com/v1/orders';
         }
+
+
+        $items = [];
+        foreach($order->getOrderMenusWithOptions() as $menu){
+
+            $items[] = [
+                "name" => $menu->name,
+                "quantity" => $menu->quantity,
+                "price" => $menu->subtotal
+            ];
+        }
         
         $order_totals = $order->getOrderTotals();
         $totals = [];
@@ -141,6 +152,8 @@ class Extension extends BaseExtension
             }
         }
 
+
+
         $request_body = [
             "order" => [
                 "producer" => [
@@ -157,7 +170,8 @@ class Extension extends BaseExtension
                 ],
                 
                 "price" => $totals,
-                "specialInstructions" => $order->delivery_instructions
+                "specialInstructions" => $order->delivery_instructions,
+                "items" => $items
             ]
         ];
 
@@ -169,7 +183,6 @@ class Extension extends BaseExtension
             ];
         }
         
-
         try {
             $res = $client->post($url, [
                     'headers' => [
@@ -184,7 +197,6 @@ class Extension extends BaseExtension
         }
         
         $result = json_decode($res->getBody());
-
 
         // add relay ready time into order db if it exists
         if($result->order->time->ready){
